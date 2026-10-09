@@ -1,0 +1,90 @@
+<div class="instructor-scene">
+  <div class="dashboard-card" aria-label="Panel del instructor">
+    <header class="app-header">
+      <div class="brand-mark" aria-hidden="true">S</div>
+      <div class="brand-copy">
+        <span class="brand-text">SENATI <strong>TaskHub</strong> PWA</span>
+        <span class="header-subtitle">Panel del instructor</span>
+      </div>
+    </header>
+
+    <main class="app-content">
+      <div
+        class="status-banner"
+        [class.is-online]="online"
+        [class.is-offline]="!online"
+        role="status"
+        aria-live="polite"
+      >
+        <span class="status-label">Estado:</span>
+        <span class="status-dot" aria-hidden="true"></span>
+        <span class="status-text">
+          {{ online ? 'CON CONEXIÓN - Guardado local disponible' : 'SIN CONEXIÓN - Modo Local' }}
+        </span>
+      </div>
+
+      <div class="content-grid">
+        <section class="courses-panel" aria-labelledby="courses-title">
+          <h2 id="courses-title">Mis Cursos y Tareas Asignadas</h2>
+
+          <ul class="course-list">
+            <li class="course-item" *ngFor="let curso of cursosInstructor">
+              <span class="course-icon" aria-hidden="true">{{ curso.icono }}</span>
+              <span class="course-name">{{ curso.nombre }}</span>
+              <span class="course-badge">Pendiente ({{ curso.pendiente }})</span>
+            </li>
+          </ul>
+        </section>
+
+        <form class="form-panel" aria-labelledby="register-title" (ngSubmit)="guardarObservacionInstructorLocal()">
+          <h3 id="register-title">Registrar Observación / Tarea Local</h3>
+
+          <label class="field-label" for="cursoSelect">Curso</label>
+          <select id="cursoSelect" name="curso" class="field-input" [(ngModel)]="cursoObservacion" required>
+            <option *ngFor="let curso of cursosInstructor" [value]="curso.nombre">{{ curso.nombre }}</option>
+          </select>
+
+          <label class="field-label" for="nombreTarea">Nombre de tarea</label>
+          <input
+            id="nombreTarea"
+            name="nombreTarea"
+            class="field-input"
+            type="text"
+            [(ngModel)]="nombreTareaLocal"
+            maxlength="120"
+            required
+          />
+
+          <label class="field-label" for="observaciones">Observaciones</label>
+          <textarea
+            id="observaciones"
+            name="observaciones"
+            class="field-input textarea-input"
+            rows="4"
+            [(ngModel)]="observacionesLocal"
+            maxlength="1000"
+            required
+          ></textarea>
+
+          <button
+            class="save-button"
+            type="submit"
+            [disabled]="guardandoObservacion || !cursoObservacion || !nombreTareaLocal.trim() || !observacionesLocal.trim()"
+          >
+            {{ guardandoObservacion ? 'GUARDANDO...' : 'GUARDAR EN DISPOSITIVO' }}
+          </button>
+          <p *ngIf="mensajeObservacion" class="save-message" role="status" aria-live="polite">
+            {{ mensajeObservacion }}
+          </p>
+        </form>
+      </div>
+
+      <p class="sync-note">
+        {{ online
+          ? 'Con conexión: tus registros se guardan en este dispositivo y puedes seguir trabajando.'
+          : 'Sin conexión: puedes seguir trabajando; tus registros se guardan en este dispositivo.' }}
+      </p>
+    </main>
+
+  </div>
+</div>
